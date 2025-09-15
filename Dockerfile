@@ -1,24 +1,24 @@
-# Dockerfile.prebuilt
-# Gunakan ini jika Anda sudah punya binary siap pakai di ./build/nivora-api
-# Pastikan binary dibangun untuk linux/amd64 dengan CGO disabled jika mau image minimal.
-# Contoh build lokal:
-#   CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -trimpath -ldflags "-s -w" -o build/nivora-api main.go
-
-FROM alpine:3.20
+# Gunakan image Go untuk build
+FROM golang:1.21 AS builder
 
 WORKDIR /app
 
-# Install paket minimal (tzdata untuk zona waktu, wget untuk healthcheck)
-RUN apk add --no-cache tzdata ca-certificates wget && \
-	addgroup -S app && adduser -S app -G app
+# Copy semua file ke container
+COPY . .
 
-ENV TZ=Asia/Jakarta
+# Build binary
+# RUN go build -o build/nivora-api main.go
 
-# Salin binary prebuilt
-COPY build/nivora-api ./nivora-api
+# Gunakan image yang lebih ringan untuk menjalankan binary
+FROM ubuntu:22.04
 
+WORKDIR /app
+
+# Copy binary dari builder
+COPY --from=builder /app/build/nivora-api ./nivora-api
+
+# Expose port sesuai ecosystem.config.js
 EXPOSE 8080
 
-USER app
-
-ENTRYPOINT ["/app/nivora-api"]
+# Jalankan aplikasi
+CMD ["./nivora-api"]

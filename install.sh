@@ -307,7 +307,7 @@ start_pm2() {
 }
 
 pm2_startup_if_requested=true
-no_build=false
+no_build=true
 no_up=false
 method="pm2"
 
