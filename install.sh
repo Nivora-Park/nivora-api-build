@@ -173,7 +173,10 @@ configure_postgres_db() {
   log "Configuring PostgreSQL role '$db_user' and database '$db_name' ..."
   (
     sudo -u postgres psql -v ON_ERROR_STOP=1 -d postgres -qtAX -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='${esc_user}') THEN CREATE ROLE \"${esc_user}\" LOGIN PASSWORD '${esc_pass}'; ELSE ALTER ROLE \"${esc_user}\" WITH LOGIN PASSWORD '${esc_pass}'; END IF; END \$\$;" >/dev/null
-    sudo -u postgres psql -v ON_ERROR_STOP=1 -d postgres -qtAX -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_database WHERE datname='${esc_db}') THEN CREATE DATABASE \"${esc_db}\" OWNER \"${esc_user}\"; END IF; END \$\$;" >/dev/null
+    # Can't run CREATE DATABASE inside a DO block (function context). Instead test existence then create.
+    if ! sudo -u postgres psql -v ON_ERROR_STOP=1 -d postgres -qtAX -c "SELECT 1 FROM pg_database WHERE datname='${esc_db}'" | grep -q 1; then
+      sudo -u postgres createdb -O "${esc_user}" "${esc_db}" >/dev/null
+    fi
   )
   ok "PostgreSQL configured."
 }
