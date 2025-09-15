@@ -171,8 +171,10 @@ configure_postgres_db() {
   esc_db=$(sql_escape "$db_name")
 
   log "Configuring PostgreSQL role '$db_user' and database '$db_name' ..."
-  sudo -u postgres psql -v ON_ERROR_STOP=1 -d postgres -qtAX -c "DO $$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='${esc_user}') THEN CREATE ROLE \"${esc_user}\" LOGIN PASSWORD '${esc_pass}'; ELSE ALTER ROLE \"${esc_user}\" WITH LOGIN PASSWORD '${esc_pass}'; END IF; END $$;" >/dev/null
-  sudo -u postgres psql -v ON_ERROR_STOP=1 -d postgres -qtAX -c "DO $$ BEGIN IF NOT EXISTS (SELECT FROM pg_database WHERE datname='${esc_db}') THEN CREATE DATABASE \"${esc_db}\" OWNER \"${esc_user}\"; END IF; END $$;" >/dev/null
+  (
+    sudo -u postgres psql -v ON_ERROR_STOP=1 -d postgres -qtAX -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname='${esc_user}') THEN CREATE ROLE \"${esc_user}\" LOGIN PASSWORD '${esc_pass}'; ELSE ALTER ROLE \"${esc_user}\" WITH LOGIN PASSWORD '${esc_pass}'; END IF; END \$\$;" >/dev/null
+    sudo -u postgres psql -v ON_ERROR_STOP=1 -d postgres -qtAX -c "DO \$\$ BEGIN IF NOT EXISTS (SELECT FROM pg_database WHERE datname='${esc_db}') THEN CREATE DATABASE \"${esc_db}\" OWNER \"${esc_user}\"; END IF; END \$\$;" >/dev/null
+  )
   ok "PostgreSQL configured."
 }
 
