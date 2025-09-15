@@ -1,0 +1,48 @@
+version: '3.8'
+services:
+  app:
+    build: .
+    ports:
+      - "59152:59152"
+    environment:
+      DEBUG: "False"
+      ALLOWED_HOSTS: 0.0.0.0
+      SERVER_HOST: 0.0.0.0
+      SERVER_PORT: 59152
+      SERVER_TIMEZONE: Asia/Jakarta
+      DB_LOG_MODE: "True"
+      MASTER_DB_NAME: nivora
+      MASTER_DB_USER: postgres
+      MASTER_DB_PASSWORD: postgres
+      MASTER_DB_HOST: db
+      MASTER_DB_PORT: 5432
+      MASTER_DB_SSL_MODE: disable
+      REPLICA_DB_NAME: nivora
+      REPLICA_DB_USER: postgres
+      REPLICA_DB_PASSWORD: postgres
+      REPLICA_DB_HOST: db
+      REPLICA_DB_PORT: 5432
+      REPLICA_DB_SSL_MODE: disable
+      SECRET: h9wt*pasj6796j##w(w8=xaje8tpi6h*r&hzgrz065u&ed+k2)
+      AUTH_EXPIRES_IN: 24h0m0s
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_DB: nivora
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - db_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  db_data:
