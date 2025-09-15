@@ -1,0 +1,32 @@
+# VCS
+.git
+.gitignore
+
+# Modules cache (handled by go mod download layer)
+node_modules
+
+# Build artifacts
+/build
+/dist
+bin
+*.out
+*.exe
+
+# Logs
+logs
+*.log
+
+# OS / Editor
+.DS_Store
+.idea
+.vscode
+
+# Local env files (uncomment if you use them locally only)
+#.env
+#.env.local
+
+# Tests cache
+coverage
+
+# Misc
+*.swp

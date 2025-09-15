@@ -1,6 +1,6 @@
 module.exports = {
   apps: Array.from({ length: 1 }, (_, i) => ({
-    name: `nivora-api-${59152 + i}`,
+    name: `nivora-api-${8080 + i}`,
     script: './build/nivora-api',
     exec_mode: 'fork',
     instances: 1,
@@ -10,7 +10,7 @@ module.exports = {
         DEBUG: 'False',
         ALLOWED_HOSTS: '0.0.0.0',
         SERVER_HOST: '0.0.0.0',
-        SERVER_PORT: `${59152 + i}`,
+        SERVER_PORT: `${8080 + i}`,
         SERVER_TIMEZONE: 'Asia/Jakarta',
         DB_LOG_MODE: 'True',
         MASTER_DB_NAME: 'nivora',

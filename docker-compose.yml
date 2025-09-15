@@ -1,14 +1,19 @@
 version: '3.8'
 services:
   app:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     ports:
-      - "59152:59152"
+      - "8080:8080"
+    # Optional: gunakan env_file untuk override rahasia di runtime
+    # env_file:
+    #   - .env
     environment:
       DEBUG: "False"
       ALLOWED_HOSTS: 0.0.0.0
       SERVER_HOST: 0.0.0.0
-      SERVER_PORT: 59152
+      SERVER_PORT: 8080
       SERVER_TIMEZONE: Asia/Jakarta
       DB_LOG_MODE: "True"
       MASTER_DB_NAME: nivora
@@ -28,6 +33,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
+    restart: unless-stopped
+    volumes:
+      - ./files:/app/files
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost:8080/health"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
   db:
     image: postgres:15
     environment:

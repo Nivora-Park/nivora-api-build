@@ -304,7 +304,7 @@ start_pm2() {
 pm2_startup_if_requested=true
 no_build=false
 no_up=false
-method=""
+method="pm2"
 
 while [[ $# -gt 0 ]]; do
   case "$1" in
@@ -371,7 +371,7 @@ case "$method" in
     else
       (cd "$ROOT_DIR" && docker-compose -f "$DOCKER_COMPOSE_FILE" up -d --build)
     fi
-    ok "Containers are up. App should be on port 59152."
+    ok "Containers are up. App should be on port 8080."
     ;;
 
   pm2)
