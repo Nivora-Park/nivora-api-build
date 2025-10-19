@@ -1,0 +1,1 @@
+find /opt/app/nivora-api-build/logs -type f -name "*.log" ! -name "$(date +\%F).log" -exec sh -c 'gzip "$1" 2>/dev/null || true' _ {} \;
